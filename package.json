@@ -1,8 +1,7 @@
 {
   "name": "checkman",
   "version": "1.0.0",
-  "description": "automated script for Auth0's quickstarts",
-  "main": "index.js",
+  "main": "checkman.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
