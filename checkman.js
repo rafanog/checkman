@@ -1,5 +1,6 @@
 var cheerio = require('cheerio'); //jquery easy implementation
-var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest; //module for http calls
+var XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest; //module for http calls
+var env = require('dotenv').config();
 var xhr = new XMLHttpRequest();
 //////////////////////////////////////
 //Data variables /////////////////////
@@ -38,7 +39,7 @@ function checkAllLinks(address){
 		var linkList = new Array();
 		var errCount = 0;
 
-		$(linksLocation).each(function() {
+		$(process.env.SCRAPED_SECTION).each(function() {
 			var link = {"text": "", "url":"", "status": "", "target": ""}
 			link.text = $(this).text();
 			link.url = $(this).attr('href');
