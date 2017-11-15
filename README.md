@@ -1,3 +1,7 @@
 # Checkman
 
-Here's the explanation text! 
+## Install dependencies
+
+```bash
+cd folder
+npm install
