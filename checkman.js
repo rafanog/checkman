@@ -34,25 +34,19 @@ function checkAllLinks(address){
 		var $ = cheerio.load(captureBody(address));
 
 		term.green('Filtering links...\n');
-		var count = 0;
-		var errList = new Array();
-		var progressBar, progress = 0;
-
-		progressBar = term.progressBar({
-			width: 80 ,
-			title: 'Checking every link:' ,
-			percent: true
-		});
-		term.progressBar();
+			
 		var linkList = new Array();
+		var count = 0;
 
 		$(process.env.SCRAPED_SECTION).each(function() {
+			count++;
+			term.green('Checking ' + count + '/' + $(process.env.SCRAPED_SECTION).length + '\n');
 			var link = {
-				"text": "",
-				"url": "",
-				"status": "",
-				"target": "",
-				"result": ""
+				text: "",
+				url: "",
+				status: "",
+				target: "",
+				result: ""
 			};
 			
 			link.text = $(this).text();
@@ -68,11 +62,7 @@ function checkAllLinks(address){
 				link.result = 'OK';
 			}
 			linkList.push(link);
-
-			count++;
-			progress += (count*100)/$(process.env.SCRAPED_SECTION).length
-			progressBar.update(progress);
-			
+			//progress += (count*100)/$(process.env.SCRAPED_SECTION).length
 		});
 		console.log('Results:');
 
