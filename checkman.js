@@ -58,9 +58,11 @@ function checkAllLinks(address){
 			progressBar.update(progress);
 			
 			if (status == 404){
-				term.red(text +' ===>Error: 404\n')
+				term.red(text +' ===> Error: 404\n');
+			}else if (target == '_blank'){
+				term.red(text +' ===> Will open on a wrong way');
 			}else{
-				term.green(text + ' ===>OK!\n');
+				term.green(text + ' ===> OK!\n');
 			}
 		});
 	}
