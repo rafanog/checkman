@@ -7,6 +7,7 @@ You can use this program to check for *dead links* within a given url and a spec
 ```bash
 cd folder
 npm install
+```
 
 ## To configure
 Open the `.env` file on a text editor, modify the `SCRAPED_SECTION` parameter to the section you want the program to scrape.
@@ -16,3 +17,4 @@ You need to specify the *url* that you want to check and execute it through the 
 
 ```bash
 node checkman URL_TO_CHECK
+```
