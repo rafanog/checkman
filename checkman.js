@@ -1,88 +1,68 @@
 var cheerio = require('cheerio'); //jquery easy implementation
 var XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest; //module for http calls
 var env = require('dotenv').config();
+var term = require('terminal-kit').terminal;
 var xhr = new XMLHttpRequest();
-//////////////////////////////////////
-//Data variables /////////////////////
-//////////////////////////////////////
-const baseUrl = 'https://auth0.com/docs/quickstart/';
-const linksLocation = '.docs-content .quickstart-docs-content a';
-
-var caseD = {
-	"name": "Vue.js",
-	"type": "spa",
-	"url": "vuejs",
-	"sections": ['01-login'],
-	"title": "Auth0 Vue SDK Quickstarts: Login"
-};
 /////////////////////////////////////
 //Exec///////////////////////////////
 /////////////////////////////////////
-var url = createURL(caseD);
-console.log('Checking all links inside: ' + caseD.name);
-checkAllLinks(url);
+console.log('Checking: ' + process.argv[2]);
+checkAllLinks(process.argv[2]);
 /////////////////////////////////////
 //Function Zone//////////////////////
 /////////////////////////////////////
-function createURL(qs){
-	return baseUrl + qs.type + '/' + qs.url;
-};
-
-function checkAllLinks(address){
-	console.log('Extracting links...');
-	var pageStatus = checkUrl(address);
-	if(!(pageStatus==200)){
-		//print error code
-		console.log('Error: ' + pageStatus);
-	}else{
-		var $ = cheerio.load(captureBody(address));
-		var linkList = new Array();
-		var errCount = 0;
-
-		$(process.env.SCRAPED_SECTION).each(function() {
-			var link = {"text": "", "url":"", "status": "", "target": ""}
-			link.text = $(this).text();
-			link.url = $(this).attr('href');
-			link.status = checkUrl(link.url);
-			link.target = $(this).attr('target');
-			linkList.push(link);
-			
-			/*if(link.status == 404){
-				console.log(link.text + ' ' + link.url +  ' ' + link.status);
-				errCount++;
-			}*/
-
-		});
-		
-		var errList = new Array();
-
-		for(i = 0; i < linkList.length; i++){
-			console.log('Testing in progress: ' + Math.round((i*100)/linkList.length) + '%');
-			linkList[i].status = checkUrl(linkList[i].url);
-			if(linkList[i].status != 200 || linkList[i].status != 301){
-				console.log('Text: ' + linkList[i].text);
-				console.log('URL: ' + linkList[i].url + ' Error: ' + linkList[i].status);
-				var error = {
-
-				}
-			}
-
-
-		}
-	}
-
-}
-
-function captureBody(link){
+function captureBody(link){//returns the body of the specified url
 	xhr.open('GET', link, false);
 	xhr.send(null);
 	return xhr.responseText;
 }
 
-function checkUrl(link){
-	//returns the response of making a get 
-	//call to a url
+function checkUrl(link){//returns the response of making a get call to a url
 	xhr.open('Get', link, false);
 	xhr.send(null);
 	return xhr.status;
+}
+
+function checkAllLinks(address){
+	var pageStatus = checkUrl(address);
+	if(!(pageStatus==200)){
+		//print error code
+		term.red('Error: ' + pageStatus);
+	}else{
+		term.green('Extracting body...\n');
+		//load the body through http call to request it and jquery to load it on a variable
+		var $ = cheerio.load(captureBody(address));
+
+		term.green('Filtering links...\n');
+		var count = 0;
+		var errList = new Array();
+		var progressBar, progress = 0;
+
+		progressBar = term.progressBar({
+			width: 80 ,
+			title: 'Checking every link:' ,
+			percent: true
+		});
+		progressBar.update(progress);
+
+		$(process.env.SCRAPED_SECTION).each(function() {
+			var text, link, status, target;
+			
+			text = $(this).text();
+			link = $(this).attr('href');
+			status = checkUrl(link);
+			target = $(this).attr('target');
+			
+			count++;
+			progress += (count*100)/$(process.env.SCRAPED_SECTION).length
+			progressBar.update(progress);
+			
+			if (status == 404){
+				term.red(text +' ===>Error: 404\n')
+			}else{
+				term.green(text + ' ===>OK!\n');
+			}
+		});
+	}
+
 }
