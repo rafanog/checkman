@@ -43,28 +43,50 @@ function checkAllLinks(address){
 			title: 'Checking every link:' ,
 			percent: true
 		});
-		progressBar.update(progress);
+		term.progressBar();
+		var linkList = new Array();
 
 		$(process.env.SCRAPED_SECTION).each(function() {
-			var text, link, status, target;
+			var link = {
+				"text": "",
+				"url": "",
+				"status": "",
+				"target": "",
+				"result": ""
+			};
 			
-			text = $(this).text();
-			link = $(this).attr('href');
-			status = checkUrl(link);
-			target = $(this).attr('target');
+			link.text = $(this).text();
+			link.url = $(this).attr('href');
+			link.status = checkUrl(link.url);
+			link.target = $(this).attr('target');
 			
+			if (link.status == 404){
+				link.result = 'Error: 404';
+			}else if (link.target == '_blank'){
+				link.result = 'Wrong value for target attribute';
+			}else{
+				link.result = 'OK';
+			}
+			linkList.push(link);
+
 			count++;
 			progress += (count*100)/$(process.env.SCRAPED_SECTION).length
 			progressBar.update(progress);
 			
-			if (status == 404){
-				term.red(text +' ===> Error: 404\n');
-			}else if (target == '_blank'){
-				term.red(text +' ===> Will open on a wrong way');
-			}else{
-				term.green(text + ' ===> OK!\n');
-			}
 		});
+		console.log('Results:');
+
+		for (i = 0; i < linkList.length; i++){
+			var message = linkList[i].text + ' ===> ' + linkList[i].result + '\n';
+			if(!linkList[i].result == 'OK'){
+				term.red(message);
+			}else{
+				term.green(message);
+			}
+		}
+
+
+		
 	}
 
 }
