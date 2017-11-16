@@ -9,10 +9,10 @@ cd folder
 npm install
 ```
 
-## To configure
+## Configuration
 Open the `.env` file on a text editor, modify the `SCRAPED_SECTION` parameter to the section you want the program to scrape.
 
-## To execute the program
+## Execute the program
 You need to specify the *url* that you want to check and execute it through the node command, E.G:
 
 ```bash
