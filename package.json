@@ -9,6 +9,7 @@
   "license": "ISC",
   "dependencies": {
     "cheerio": "^1.0.0-rc.2",
+    "cli-progress": "^1.6.0",
     "dotenv": "^4.0.0",
     "terminal-kit": "^1.14.3",
     "xmlhttprequest": "^1.8.0"

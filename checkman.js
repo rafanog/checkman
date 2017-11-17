@@ -2,6 +2,7 @@ var cheerio = require('cheerio'); //jquery easy implementation
 var XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest; //module for http calls
 var env = require('dotenv').config();
 var term = require('terminal-kit').terminal;
+var progress = require('cli-progress');
 var xhr = new XMLHttpRequest();
 /////////////////////////////////////
 //Exec///////////////////////////////
@@ -34,13 +35,21 @@ function checkAllLinks(address){
 		var $ = cheerio.load(captureBody(address));
 
 		term.green('Filtering links...\n');
-			
+		//implementation of progressbar
+		var bar = new progress.Bar({
+			stopOnComplete: true,
+			clearOnComplete: true,
+		    format: 'progress [{bar}] {percentage}% | ETA: {eta}s | {value}/{total}',
+		    hideCursor: true
+		}, progress.Presets.shades_classic);
+		bar.start($(process.env.SCRAPED_SECTION), 0);	
+
 		var linkList = new Array();
 		var count = 0;
 
 		$(process.env.SCRAPED_SECTION).each(function() {
 			count++;
-			term.green('Checking ' + count + '/' + $(process.env.SCRAPED_SECTION).length + '\n');
+			//term.green('Checking ' + count + '/' + $(process.env.SCRAPED_SECTION).length + '\n');
 			var link = {
 				text: "",
 				url: "",
@@ -63,7 +72,11 @@ function checkAllLinks(address){
 			}
 			linkList.push(link);
 			//progress += (count*100)/$(process.env.SCRAPED_SECTION).length
+			bar.update(Math.round(count*100/$(process.env.SCRAPED_SECTION).length));
 		});
+
+		bar.stop()
+		
 		console.log('Results:');
 
 		for (i = 0; i < linkList.length; i++){
@@ -73,10 +86,7 @@ function checkAllLinks(address){
 			}else{
 				term.green(message);
 			}
-		}
-
-
-		
+		}		
 	}
 
 }
